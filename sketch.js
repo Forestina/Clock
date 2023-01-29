@@ -3,42 +3,65 @@ let canvasHight = 500;
 let panelR = canvasWidth / 1.5;
 let sCtr, mCtr, hCtr;
 
+//html
+let canvas;
+let button;
+let slider;
+
+let displayState = 0;
+
 
 function setup() {
-  createCanvas(canvasWidth, canvasHight);
+  canvas = createCanvas(windowWidth, windowHeight);
+  canvas.parent("sketch-container"); //move our canvas inside this HTML element
+
   frameRate(20);
+
+  background(0);
   preSettings();
+
+  rectMode(CENTER);
+
+  addGUI();
 }
 
 function draw() {
+  background(35,slider.value()/3,slider.value()/2);
   preSettings();
+
 
   pointer('hours');
   pointer('minutes');
   pointer('seconds');
 
+  
+  if(displayState == 0){
+    frameRate(20);
+  }else{
+    frameRate(2);
+  }
 
 
 }
 function preSettings() {
-  background(0);
-   var r=random(0,255);
-  var g=random(0,255);
-  var b=random(0,255);
+
+  var r = random(0, 255);
+  var g = random(0, 255);
+  var b = random(0, 255);
 
   //fill(19, 31, 37);
-  fill(r,g,b,50);
+  fill(r, g, b, 50);
   stroke(126, 178, 204);
   strokeWeight(2);
-  
+
   //center
   ellipse(canvasWidth / 2, canvasHight / 2, random(0, 10), random(0, 10));
 
   //outer
- 
-  stroke(r,g,b);
+
+  stroke(r, g, b);
   var r = panelR + random(0, 150);
-  arc(canvasWidth / 2, canvasHight / 2, r, r, random(0, 2 *PI), random(0, 2 * PI), random(10, 100));
+  arc(canvasWidth / 2, canvasHight / 2, r, r, random(0, 2 * PI), random(0, 2 * PI), random(10, 100));
 
 
 }
@@ -109,5 +132,49 @@ function piDraw(i, type) {
         1.5 * PI + ((i - 1) * PI / 6), 1.5 * PI + i * PI / 6 - 0.01);
       break;
   }
+
+}
+
+function addGUI() {
+  //add a slider
+  slider = createSlider(0, 255, 100);
+  slider.addClass("slider");
+  //Add the slider to the parent gui HTML element
+  slider.parent("gui-container");
+
+  //add a button
+  if (displayState == 0) {
+    button = createButton("Slow Mode");
+  } else if (displayState == 1) {
+    button = createButton("Fast Mode");
+  }
+
+  button.addClass("button");
+  //Add the play button to the parent gui HTML element
+  button.parent("gui-container");
+
+  //Adding a mouse pressed event listener to the button 
+  button.mousePressed(handleButtonPress);
+
+}
+
+function handleButtonPress() {
+
+  if (displayState < 1) {
+    displayState++;
+  } else {
+    displayState = 0;
+  }
+
+  if (displayState == 0) {
+    button.html("Slow Mode");
+  } else if (displayState == 1) {
+    button.html("Fast Mode");
+  }
+}
+
+function windowResized() {
+
+  resizeCanvas(windowWidth, windowHeight);
 
 }
